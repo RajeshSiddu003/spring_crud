@@ -1,5 +1,5 @@
 Notes:
-`````
+``````
 
 controller -- GetMapping("/{id}") this will navigates to a service
 service -- logic (for example to getAll, it is "return studentRepo.findAll();")
