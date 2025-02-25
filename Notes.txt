@@ -1,0 +1,7 @@
+Notes:
+`````
+
+controller -- GetMapping("/{id}") this will navigates to a service
+service -- logic (for example to getAll, it is "return studentRepo.findAll();")
+model -- structure of table (table in MySQL workbench will be automatically created when code is executed)
+repository -- we use repo of model to make changes to that model
