@@ -1,7 +1,129 @@
-Notes:
-``````
+Structure::
 
-controller -- GetMapping("/{id}") this will navigates to a service
-service -- logic (for example to getAll, it is "return studentRepo.findAll();")
-model -- structure of table (table in MySQL workbench will be automatically created when code is executed)
-repository -- we use repo of model to make changes to that model
+Controller
+``````````
+package com.example.demo.controller;
+
+import com.example.demo.model.Student;
+import com.example.demo.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/students")
+public class StudentController {
+    @Autowired
+    private StudentService studentService;
+
+    @GetMapping
+    public List<Student> getAllStudents() {
+        return studentService.getAllStudents();
+    }
+//    @GetMapping("")
+//    public String getAllStudents() {
+//        return "hello";
+//    }
+    @GetMapping("/{id}")
+    public Optional<Student> getStudentById(@PathVariable Long id) {
+        return studentService.getStudentById(id);
+    }
+
+    @PostMapping
+    public Student addStudent(@RequestBody Student student) {
+        return studentService.addStudent(student);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
+    }
+}
+
+Model
+`````
+package com.example.demo.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "students")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private int age;
+    private String email;
+
+    // Constructors
+    public Student() {}
+
+    public Student(String name, int age, String email) {
+        this.name = name;
+        this.age = age;
+        this.email = email;
+    }
+
+    // Getters & Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}
+
+Repo
+````
+package com.example.demo.repository;
+
+import com.example.demo.model.Student;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface StudentRepository extends JpaRepository<Student, Long> {}
+
+
+Service
+```````
+package com.example.demo.service;
+
+import com.example.demo.model.Student;
+import com.example.demo.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class StudentService {
+    @Autowired
+    private StudentRepository studentRepository;
+
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
+
+    public Optional<Student> getStudentById(Long id) {
+        return studentRepository.findById(id);
+    }
+
+    public Student addStudent(Student student) {
+        return studentRepository.save(student);
+    }
+
+    public void deleteStudent(Long id) {
+        studentRepository.deleteById(id);
+    }
+}
